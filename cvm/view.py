@@ -31,7 +31,8 @@ class Group(Content):
 
     def load(self, node: Node):
         print("Group.load(): " + str(self.scope.selector) + " " + self.scope.value)
-        return [self.scope.parse(element) for element in node.elements(self.scope.selector, self.scope.value)]
+        return [self.scope.parse(element) for element in node.elements(self.scope.selector, self.scope.value)]\
+            if node else []
 
 
 class Field(Scope):
@@ -40,7 +41,8 @@ class Field(Scope):
 
     def load(self, node: Node):
         print("Field.load(): " + str(self.selector) + " " + self.value)
-        return node.element(self.selector, self.value)
+        node = node.element(self.selector, self.value)
+        return self.parse(node) if node else None
 
     def parse(self, node: Node):
         return node
@@ -52,7 +54,8 @@ class View(Scope):
 
     def load(self, node: Node):
         print("View.load(): " + str(self.selector) + " " + self.value)
-        return self.parse(node.element(self.selector, self.value))
+        node = node.element(self.selector, self.value)
+        return self.parse(node) if node else None
 
     def parse(self, node: Node):
         return dict((key, content.load(node)) for (key, content) in getmembers(self) if isinstance(content, Content))
