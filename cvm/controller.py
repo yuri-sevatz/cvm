@@ -2,6 +2,7 @@
 
 from enum import Enum
 from http.cookiejar import LWPCookieJar, Cookie
+from urllib.parse import urlparse
 
 import requests
 from selenium.common.exceptions import TimeoutException
@@ -163,7 +164,7 @@ class Browser(Node):
 
     @url.setter
     def url(self, url: str):
-        self.load(url)
+        self._driver.get(urlparse(url, 'http').geturl())
 
     @property
     def html(self) -> str:
@@ -172,9 +173,6 @@ class Browser(Node):
     @property
     def cookies(self) -> Cookies:
         return Cookies(self._driver)
-
-    def load(self, url: str):
-        self._driver.get(url)
 
     def save(self, url: str, path: str):
         with open(path, 'wb') as fd:
