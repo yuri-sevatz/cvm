@@ -1,8 +1,9 @@
 #!/usr/bin/env python
-
+import os
 from http.cookiejar import LWPCookieJar, Cookie
 from urllib.parse import urlparse
 
+import re
 import requests
 from selenium.webdriver.remote.webdriver import WebDriver
 
@@ -42,24 +43,24 @@ class Cookies:
     @staticmethod
     def create(cookie_dict: dict) -> Cookie:
         return Cookie(
-                version=0,
-                name=cookie_dict['name'],
-                value=cookie_dict['value'],
-                port='80',
-                port_specified=False,
-                domain=cookie_dict['domain'],
-                domain_specified=True,
-                domain_initial_dot=False,
-                path=cookie_dict['path'],
-                path_specified=True,
-                secure=cookie_dict['secure'],
-                expires=cookie_dict['expiry'],
-                discard=False,
-                comment=None,
-                comment_url=None,
-                rest=None,
-                rfc2109=False
-            )
+            version=0,
+            name=cookie_dict['name'],
+            value=cookie_dict['value'],
+            port='80',
+            port_specified=False,
+            domain=cookie_dict['domain'],
+            domain_specified=True,
+            domain_initial_dot=False,
+            path=cookie_dict['path'],
+            path_specified=True,
+            secure=cookie_dict['secure'],
+            expires=cookie_dict['expiry'],
+            discard=False,
+            comment=None,
+            comment_url=None,
+            rest=None,
+            rfc2109=False
+        )
 
 
 class Browser(dom.Node):
@@ -85,9 +86,24 @@ class Browser(dom.Node):
     def cookies(self) -> Cookies:
         return Cookies(self._driver)
 
+    def get(self, url: str, params=None):
+        return requests.get(url, params, cookies=self.cookies.jar())
+
+    def post(self, url: str, data=None, json=None):
+        return requests.post(url, data, json, cookies=self.cookies.jar())
+
+    def put(self, url: str, data=None):
+        return requests.put(url, data, cookies=self.cookies.jar())
+
+    def delete(self, url: str):
+        return requests.delete(url, cookies=self.cookies.jar())
+
     def save(self, url: str, path: str):
-        with open(path, 'wb') as fd:
-            fd.write(requests.get(url, cookies=self.cookies.jar()).content)
+        src = urlparse(url, 'http')
+        dst = path if os.path.basename(path) else os.path.join(path, os.path.basename(src.path))
+        with open(dst, 'wb') as fd:
+            file = self.get(src.geturl())
+            fd.write(file.content)
 
     def back(self):
         self._driver.back()
