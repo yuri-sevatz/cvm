@@ -87,7 +87,7 @@ class Element(Node):
 
     @property
     def text(self):
-        return self._node.text
+        return self._node.get_attribute('textContent')
 
     @property
     def enabled(self):
