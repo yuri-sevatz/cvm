@@ -87,7 +87,8 @@ class Element(Node):
 
     @property
     def text(self):
-        return self._node.get_attribute('textContent')
+        text = self._node.get_attribute('textContent')
+        return text.strip() if text else text
 
     @property
     def enabled(self):
@@ -125,7 +126,7 @@ class Element(Node):
         self._node.submit()
 
     def __getattr__(self, item):
-        return self.attribute(item)
+        return self._node.get_attribute(item)
 
     def __eq__(self, node: Node):
         return self._node == node._node

@@ -3,7 +3,6 @@ import os
 from http.cookiejar import LWPCookieJar, Cookie
 from urllib.parse import urlparse
 
-import re
 import requests
 from selenium.webdriver.remote.webdriver import WebDriver
 
