@@ -9,11 +9,11 @@ if (PYTHON)
         "${CMAKE_CURRENT_BINARY_DIR}/setup.py"
     )
     set(DEPS
+        "${CMAKE_CURRENT_SOURCE_DIR}/cvm/__init__.py"
         "${CMAKE_CURRENT_SOURCE_DIR}/cvm/controller.py"
         "${CMAKE_CURRENT_SOURCE_DIR}/cvm/dom.py"
         "${CMAKE_CURRENT_SOURCE_DIR}/cvm/ui.py"
         "${CMAKE_CURRENT_SOURCE_DIR}/cvm/view.py"
-        "${CMAKE_CURRENT_SOURCE_DIR}/cvm"
     )
     set(OUTPUT
         "${CMAKE_CURRENT_BINARY_DIR}/build/timestamp"

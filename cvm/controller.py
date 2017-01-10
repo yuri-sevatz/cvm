@@ -78,6 +78,18 @@ class Browser(dom.Node):
         self._driver.get(urlparse(url, 'http').geturl())
 
     @property
+    def hostname(self) -> str:
+        return urlparse(self._driver.current_url).hostname
+
+    @property
+    def port(self) -> str:
+        return urlparse(self._driver.current_url).port
+
+    @property
+    def path(self) -> str:
+        return urlparse(self._driver.current_url).path
+
+    @property
     def html(self) -> str:
         return self._driver.page_source
 
@@ -96,6 +108,11 @@ class Browser(dom.Node):
 
     def delete(self, url: str):
         return requests.delete(url, cookies=self.cookies.jar())
+
+    def write(self, url: str, fd: int):
+        src = urlparse(url, 'http')
+        file = self.get(src.geturl())
+        fd.write(file.content)
 
     def save(self, url: str, path: str):
         src = urlparse(url, 'http')
