@@ -69,6 +69,14 @@ class Node:
             return []
         return [Element(self._driver, element) for element in elements]
 
+    @property
+    def children(self):
+        return self.elements(Selector.XPATH, './*')
+
+    @property
+    def tuples(self):
+        return [(child.tag, child.tuples) for child in self.children]
+
     def screenshot(self, path) -> bool:
         return self._node.screenshot(path)
 
@@ -89,6 +97,10 @@ class Element(Node):
     def text(self):
         text = self._node.get_attribute('textContent')
         return text.strip() if text else text
+
+    @property
+    def html(self) -> str:
+        return self._node.get_attribute('outerHTML')
 
     @property
     def enabled(self):
