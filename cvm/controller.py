@@ -78,16 +78,28 @@ class Browser(dom.Node):
         self._driver.get(urlparse(url, 'http').geturl())
 
     @property
+    def scheme(self) -> str:
+        return urlparse(self.url).scheme
+
+    @property
     def hostname(self) -> str:
-        return urlparse(self._driver.current_url).hostname
+        return urlparse(self.url).hostname
 
     @property
     def port(self) -> str:
-        return urlparse(self._driver.current_url).port
+        return urlparse(self.url).port
+
+    @property
+    def username(self) -> str:
+        return urlparse(self.url).username
+
+    @property
+    def password(self) -> str:
+        return urlparse(self.url).password
 
     @property
     def path(self) -> str:
-        return urlparse(self._driver.current_url).path
+        return urlparse(self.url).path
 
     @property
     def html(self) -> str:
