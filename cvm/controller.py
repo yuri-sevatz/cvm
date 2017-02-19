@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import os
-from http.cookiejar import LWPCookieJar, Cookie
+from http.cookiejar import MozillaCookieJar, Cookie
 from urllib.parse import urlparse
 
 import requests
@@ -17,7 +17,7 @@ class Cookies:
         self._driver.delete_all_cookies()
 
     def jar(self):
-        jar = LWPCookieJar()
+        jar = MozillaCookieJar()
         for cookie_dict in self._driver.get_cookies():
             jar.set_cookie(Cookies.create(cookie_dict))
         return jar
@@ -45,7 +45,7 @@ class Cookies:
             version=0,
             name=cookie_dict['name'],
             value=cookie_dict['value'],
-            port='80',
+            port=None,
             port_specified=False,
             domain=cookie_dict['domain'],
             domain_specified=True,
@@ -53,7 +53,7 @@ class Cookies:
             path=cookie_dict['path'],
             path_specified=True,
             secure=cookie_dict['secure'],
-            expires=cookie_dict['expiry'],
+            expires=cookie_dict.get('expiry', 0),
             discard=False,
             comment=None,
             comment_url=None,
