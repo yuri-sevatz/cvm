@@ -53,7 +53,7 @@ class Cookies:
             path=cookie_dict['path'],
             path_specified=True,
             secure=cookie_dict['secure'],
-            expires=cookie_dict.get('expiry', 0),
+            expires=cookie_dict.get('expiry', None),
             discard=False,
             comment=None,
             comment_url=None,
