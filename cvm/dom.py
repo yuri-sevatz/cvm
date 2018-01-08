@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from enum import Enum
 
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import NoSuchElementException,TimeoutException
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.wait import WebDriverWait
@@ -53,18 +53,22 @@ class Node:
 
     def element(self, selector: Selector, value: str, timeout: float = 0):
         try:
-            element = WebDriverWait(self._driver, timeout).until(
-                lambda driver: Selector.one(selector)(self._node, value)
-            )
+            def func(driver):
+                return Selector.one(selector)(self._node, value)
+            element = WebDriverWait(self._driver, timeout).until(func) if timeout else func(self._driver)
+        except NoSuchElementException:
+            return None
         except TimeoutException:
             return None
         return Element(self._driver, element) if element else None
 
     def elements(self, selector: Selector, value: str, timeout: float = 0):
         try:
-            elements = WebDriverWait(self._driver, timeout).until(
-                lambda driver: Selector.all(selector)(self._node, value)
-            )
+            def func(driver):
+                return Selector.all(selector)(self._node, value)
+            elements = WebDriverWait(self._driver, timeout).until(func) if timeout else func(self._driver)
+        except NoSuchElementException:
+            return []
         except TimeoutException:
             return []
         return [Element(self._driver, element) for element in elements]
