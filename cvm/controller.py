@@ -109,17 +109,21 @@ class Browser(dom.Node):
     def cookies(self) -> Cookies:
         return Cookies(self._driver)
 
+    @property
+    def ua(self) -> str:
+        return self._driver.execute_script('return navigator.userAgent;')
+
     def get(self, url: str, params=None):
-        return requests.get(url, params, cookies=self.cookies.jar())
+        return requests.get(url, params, headers={'User-Agent': self.ua}, cookies=self.cookies.jar())
 
     def post(self, url: str, data=None, json=None):
-        return requests.post(url, data, json, cookies=self.cookies.jar())
+        return requests.post(url, data, json, headers={'User-Agent': self.ua}, cookies=self.cookies.jar())
 
     def put(self, url: str, data=None):
-        return requests.put(url, data, cookies=self.cookies.jar())
+        return requests.put(url, data, headers={'User-Agent': self.ua}, cookies=self.cookies.jar())
 
     def delete(self, url: str):
-        return requests.delete(url, cookies=self.cookies.jar())
+        return requests.delete(url, headers={'User-Agent': self.ua}, cookies=self.cookies.jar())
 
     def write(self, url: str, fd: int):
         src = urlparse(url, 'http')
