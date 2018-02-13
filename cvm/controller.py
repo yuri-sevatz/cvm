@@ -65,6 +65,7 @@ class Cookies:
 class Browser(dom.Node):
     def __init__(self, driver: WebDriver):
         super().__init__(driver, driver)
+        self._agent = None
 
     def load(self, page: view.Page):
         return page.get(self)
@@ -110,20 +111,22 @@ class Browser(dom.Node):
         return Cookies(self._driver)
 
     @property
-    def ua(self) -> str:
-        return self._driver.execute_script('return navigator.userAgent;')
+    def agent(self) -> str:
+        if not self._agent:
+            self._agent = self._driver.execute_script('return navigator.userAgent;')
+        return self._agent
 
     def get(self, url: str, params=None):
-        return requests.get(url, params, headers={'User-Agent': self.ua}, cookies=self.cookies.jar())
+        return requests.get(url, params, headers={'User-Agent': self.agent}, cookies=self.cookies.jar())
 
     def post(self, url: str, data=None, json=None):
-        return requests.post(url, data, json, headers={'User-Agent': self.ua}, cookies=self.cookies.jar())
+        return requests.post(url, data, json, headers={'User-Agent': self.agent}, cookies=self.cookies.jar())
 
     def put(self, url: str, data=None):
-        return requests.put(url, data, headers={'User-Agent': self.ua}, cookies=self.cookies.jar())
+        return requests.put(url, data, headers={'User-Agent': self.agent}, cookies=self.cookies.jar())
 
     def delete(self, url: str):
-        return requests.delete(url, headers={'User-Agent': self.ua}, cookies=self.cookies.jar())
+        return requests.delete(url, headers={'User-Agent': self.agent}, cookies=self.cookies.jar())
 
     def write(self, url: str, fd: int):
         src = urlparse(url, 'http')
@@ -133,8 +136,8 @@ class Browser(dom.Node):
     def save(self, url: str, path: str):
         src = urlparse(url, 'http')
         dst = path if os.path.basename(path) else os.path.join(path, os.path.basename(src.path))
+        file = self.get(src.geturl())
         with open(dst, 'wb') as fd:
-            file = self.get(src.geturl())
             fd.write(file.content)
 
     def back(self):
