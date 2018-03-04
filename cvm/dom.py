@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 from enum import Enum
 
-from selenium.common.exceptions import NoSuchElementException,TimeoutException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.support.wait import WebDriverWait
 
 from cvm import ui
@@ -72,6 +73,11 @@ class Node:
         except TimeoutException:
             return []
         return [Element(self._driver, element) for element in elements]
+
+    def unload(self, timeout: float = 300):
+        WebDriverWait(self._driver, timeout).until(
+            staleness_of(self._node)
+        )
 
     @property
     def children(self):
