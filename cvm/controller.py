@@ -156,10 +156,23 @@ class Browser(dom.Node):
         return self._driver.execute_script('window.scrollTo(' + str(position.x) + ',' + str(position.y) + ')')
 
     def scroll_top(self):
-        self._driver.execute_script('window.scrollTo(0,0)')
+        self._driver.execute_script(
+            'window.scrollTo(0,0);'
+        )
 
     def scroll_bottom(self):
-        self._driver.execute_script('window.scrollTo(0,document.body.scrollHeight)')
+        self._driver.execute_script(
+            'window.scrollTo(0,document.body.scrollHeight);'
+        )
+
+    def scroll_element(self, node: dom.Node):
+        self._driver.execute_script(
+            'var r=arguments[0].getBoundingClientRect();'
+            'var x=r.left+(r.right-r.left)/2;'
+            'var y=r.top+(r.bottom-r.top)/2;'
+            'window.scrollTo(x+window.innerWidth/2,y+window.innerHeight/2);',
+            node._node
+        )
 
     def close(self):
         self._driver.close()
