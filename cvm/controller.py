@@ -78,6 +78,9 @@ class Browser(dom.Node):
     def url(self, url: str):
         self._driver.get(urlparse(url, 'http').geturl())
 
+    def refresh(self):
+        self._driver.refresh()
+
     @property
     def scheme(self) -> str:
         return urlparse(self.url).scheme
