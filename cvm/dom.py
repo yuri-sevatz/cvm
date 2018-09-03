@@ -139,7 +139,10 @@ class Element(Node):
         self._node.clear()
 
     def click(self):
-        self._node.click()
+        self._driver.execute_script(
+            "arguments[0].click();",
+            self._node
+        )
 
     def input(self, value):
         self._node.send_keys(value)
